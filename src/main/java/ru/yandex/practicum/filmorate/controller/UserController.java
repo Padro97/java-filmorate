@@ -8,12 +8,12 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-
 @RestController
 @RequestMapping("/users")
 public class UserController {
     private List<User> users = new ArrayList<>();
     private final Logger log = LoggerFactory.getLogger(UserController.class);
+
     @PostMapping("/create")
     public User createUser(@RequestBody User user) {
         try {
