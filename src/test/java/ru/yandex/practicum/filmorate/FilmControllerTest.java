@@ -64,7 +64,7 @@ public class FilmControllerTest {
         Film filmWithNegativeDuration = new Film();
         filmWithNegativeDuration.setName("Test Film");
         filmWithNegativeDuration.setId(1);
-        filmWithNegativeDuration.setReleaseDate(new Date(1990, 1, 1) );
+        filmWithNegativeDuration.setReleaseDate(new Date(1990, 1, 1));
         filmWithNegativeDuration.setDuration(-1);
         Film result = filmController.addFilm(filmWithNegativeDuration);
         assertEquals(null, result);
