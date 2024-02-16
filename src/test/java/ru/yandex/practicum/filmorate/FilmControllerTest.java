@@ -1,6 +1,5 @@
 package ru.yandex.practicum.filmorate;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import ru.yandex.practicum.filmorate.controller.FilmController;
@@ -13,12 +12,10 @@ import static org.junit.jupiter.api.Assertions.*;
 public class FilmControllerTest {
 
     private FilmController filmController;
-    private ObjectMapper objectMapper;
 
     @BeforeEach
     public void setup() {
         filmController = new FilmController();
-        objectMapper = new ObjectMapper();
     }
 
     @Test
