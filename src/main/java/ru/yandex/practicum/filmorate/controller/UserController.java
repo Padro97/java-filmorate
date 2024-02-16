@@ -45,6 +45,7 @@ public class UserController {
             return null;
         }
     }
+
     @PutMapping("/update/{id}")
     public User updateUser(@PathVariable int id, @RequestBody User updatedUser) {
         try {
@@ -66,6 +67,7 @@ public class UserController {
             return null;
         }
     }
+
     @GetMapping("/all")
     public List<User> getAllUsers() {
         return users;
