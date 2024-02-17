@@ -57,8 +57,8 @@ public class UserController {
         }
     }
 
-    @PutMapping("/update/{id}")
-    public User updateUser(@PathVariable int id, @RequestBody User updatedUser) {
+    @PutMapping
+    public Object updateUser(@PathVariable int id, @RequestBody User updatedUser) {
         try {
             for (User user : users) {
                 if (user.getId() == id) {
@@ -67,19 +67,19 @@ public class UserController {
                     user.setName(updatedUser.getName());
                     user.setBirthday(updatedUser.getBirthday());
                     log.info("Пользователь успешно обновлен: {}", user);
-                    return user;
+                    return ResponseEntity.ok(user).getBody();
                 }
             }
 
             log.error("Ошибка: Пользователь с указанным ID не найден");
-            return null;
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         } catch (Exception e) {
             log.error("Произошла ошибка при обновлении пользователя", e);
-            return null;
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         }
     }
 
-    @GetMapping("/all")
+    @GetMapping
     public List<User> getAllUsers() {
         return users;
     }
