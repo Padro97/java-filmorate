@@ -2,6 +2,8 @@ package ru.yandex.practicum.filmorate;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import ru.yandex.practicum.filmorate.controller.UserController;
 import ru.yandex.practicum.filmorate.model.User;
 
@@ -30,7 +32,7 @@ public class UserControllerTest {
         validUser.setName("Test User");
         validUser.setBirthday(date);
 
-        User createdUser = userController.createUser(validUser);
+        ResponseEntity<Object> createdUser = userController.createUser(validUser);
 
         assertNotNull(createdUser, "User should be created");
     }
@@ -42,9 +44,9 @@ public class UserControllerTest {
         userWithInvalidEmail.setName("Name");
         userWithInvalidEmail.setBirthday(date);
         userWithInvalidEmail.setLogin("Logut");
-        User result = userController.createUser(userWithInvalidEmail);
+        ResponseEntity<Object> result = userController.createUser(userWithInvalidEmail);
 
-        assertEquals(null, result);
+        assertEquals(HttpStatus.BAD_REQUEST, result.getStatusCode());
     }
 
     @Test
@@ -55,8 +57,9 @@ public class UserControllerTest {
         userWithInvalidLogin.setId(1);
         userWithInvalidLogin.setName("aa");
         userWithInvalidLogin.setBirthday(date);
-        User result = userController.createUser(userWithInvalidLogin);
-        assertEquals(null, result);
+        ResponseEntity<Object> result = userController.createUser(userWithInvalidLogin);
+
+        assertEquals(HttpStatus.BAD_REQUEST, result.getStatusCode());
     }
 
     @Test
@@ -67,8 +70,8 @@ public class UserControllerTest {
         user.setName("");
         user.setId(1);
         user.setBirthday(date);
-        User result = userController.createUser(user);
-        assertEquals(null, result);
+        ResponseEntity<Object> result = userController.createUser(user);
+        assertEquals(HttpStatus.BAD_REQUEST, result.getStatusCode());
     }
 
     @Test
@@ -81,8 +84,8 @@ public class UserControllerTest {
         user.setName("sda");
         user.setId(1);
         user.setBirthday(invalidDate);
-        User result = userController.createUser(user);
-        assertEquals(null, result);
+        ResponseEntity<Object> result = userController.createUser(user);
+        assertEquals(HttpStatus.BAD_REQUEST, result.getStatusCode());
     }
 
     @Test
@@ -95,8 +98,8 @@ public class UserControllerTest {
         user.setName("sda");
         user.setId(-1);
         user.setBirthday(invalidDate);
-        User result = userController.createUser(user);
-        assertEquals(null, result);
+        ResponseEntity<Object> result = userController.createUser(user);
+        assertEquals(HttpStatus.BAD_REQUEST, result.getStatusCode());
     }
 
 

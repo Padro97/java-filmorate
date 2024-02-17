@@ -1,5 +1,7 @@
 package ru.yandex.practicum.filmorate.controller;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.User;
 import org.slf4j.Logger;
@@ -19,11 +21,11 @@ public class UserController {
 
 
     @PostMapping
-    public User createUser(@RequestBody User user) {
+    public ResponseEntity<Object> createUser(@RequestBody User user) {
         try {
             if (user.getEmail() == null || !user.getEmail().contains("@")) {
                 log.error("400");
-                return null;
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
             }
 
             if (user.getId() < 1) {
@@ -48,7 +50,7 @@ public class UserController {
 
             users.add(user);
             log.info("200");
-            return user;
+            return ResponseEntity.ok(user);
         } catch (Exception e) {
             log.error("Произошла ошибка при создании пользователя", e);
             return null;
