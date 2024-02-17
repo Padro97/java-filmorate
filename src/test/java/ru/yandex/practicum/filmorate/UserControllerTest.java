@@ -5,6 +5,8 @@ import org.junit.jupiter.api.Test;
 import ru.yandex.practicum.filmorate.controller.UserController;
 import ru.yandex.practicum.filmorate.model.User;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -12,6 +14,9 @@ import static org.junit.jupiter.api.Assertions.*;
 public class UserControllerTest {
 
     private UserController userController;
+    String dateString = "1990-02-16";
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+    LocalDate date = LocalDate.parse(dateString, formatter);
 
     @BeforeEach
     public void setup() {
@@ -24,7 +29,7 @@ public class UserControllerTest {
         validUser.setEmail("test@example.com");
         validUser.setLogin("testuser");
         validUser.setName("Test User");
-        validUser.setBirthday(new Date(1990, 1, 1));
+        validUser.setBirthday(date);
 
         User createdUser = userController.createUser(validUser);
 
@@ -36,7 +41,7 @@ public class UserControllerTest {
         User userWithInvalidEmail = new User();
         userWithInvalidEmail.setEmail("invalidemail");
         userWithInvalidEmail.setName("Name");
-        userWithInvalidEmail.setBirthday(new Date(1990, 1, 1));
+        userWithInvalidEmail.setBirthday(date);
         userWithInvalidEmail.setLogin("Logut");
         User result = userController.createUser(userWithInvalidEmail);
 
@@ -50,7 +55,7 @@ public class UserControllerTest {
         userWithInvalidLogin.setEmail("email@");
         userWithInvalidLogin.setId(1);
         userWithInvalidLogin.setName("aa");
-        userWithInvalidLogin.setBirthday(new Date(1990, 1, 1));
+        userWithInvalidLogin.setBirthday(date);
         User result = userController.createUser(userWithInvalidLogin);
         assertEquals(null, result);
     }
@@ -62,7 +67,7 @@ public class UserControllerTest {
         user.setEmail("email@");
         user.setName("");
         user.setId(1);
-        user.setBirthday(new Date(1990, 1, 1));
+        user.setBirthday(date);
         User result = userController.createUser(user);
         assertEquals(null, result);
     }
@@ -70,11 +75,13 @@ public class UserControllerTest {
     @Test
     public void testCreateUserWithFutureBirthday() {
         User user = new User();
+        String invalidDateS = "2145-02-16";
+        LocalDate invalidDate = LocalDate.parse(invalidDateS, formatter);
         user.setLogin("user");
         user.setEmail("email@");
-        user.setName("");
+        user.setName("sda");
         user.setId(1);
-        user.setBirthday(new Date(2145, 1, 1));
+        user.setBirthday(invalidDate);
         User result = userController.createUser(user);
         assertEquals(null, result);
     }

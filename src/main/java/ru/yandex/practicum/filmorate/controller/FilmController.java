@@ -5,10 +5,9 @@ import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.Film;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
+import java.time.LocalDate;
 
 @RestController
 @RequestMapping("/films")
@@ -29,7 +28,7 @@ public class FilmController {
                 return null;
             }
 
-            if (film.getReleaseDate() != null && film.getReleaseDate().before(new Date(1895, 11, 28))) {
+            if (film.getReleaseDate() != null && film.getReleaseDate().isBefore(LocalDate.of(1895, 12, 20))) {
                 log.error("Ошибка: Дата релиза не может быть раньше 28 декабря 1895 года");
                 return null;
             }

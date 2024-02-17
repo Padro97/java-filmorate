@@ -7,12 +7,18 @@ import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.time.LocalDate;
+import java.time.ZoneId;
+
+
 
 @RestController
 @RequestMapping("/users")
 public class UserController {
     private List<User> users = new ArrayList<>();
     private final Logger log = LoggerFactory.getLogger(UserController.class);
+    User user;
+
 
     @PostMapping("/create")
     public User createUser(@RequestBody User user) {
@@ -32,7 +38,7 @@ public class UserController {
                 return null;
             }
 
-            if (user.getBirthday() != null && user.getBirthday().after(new Date(2024, 2, 16))) {
+            if (user.getBirthday() != null && user.getBirthday().isAfter(LocalDate.now())) {
                 log.error("Ошибка: Дата рождения не может быть в будущем");
                 return null;
             }
