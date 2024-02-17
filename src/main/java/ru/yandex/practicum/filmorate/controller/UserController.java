@@ -26,6 +26,11 @@ public class UserController {
                 return null;
             }
 
+            if (user.getId() < 1) {
+                log.error("Ошибка: ID должен быть равен или больше 1");
+                return null;
+            }
+
             if (user.getLogin() == null || user.getLogin().isEmpty() || user.getLogin().contains(" ")) {
                 log.error("Ошибка: Логин не может быть пустым и содержать пробелы");
                 return null;

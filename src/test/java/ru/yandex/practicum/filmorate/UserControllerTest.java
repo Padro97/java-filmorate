@@ -85,5 +85,19 @@ public class UserControllerTest {
         assertEquals(null, result);
     }
 
+    @Test
+    public void testCreateUserWithInvalidId() {
+        User user = new User();
+        String invalidDateS = "2012-02-16";
+        LocalDate invalidDate = LocalDate.parse(invalidDateS, formatter);
+        user.setLogin("user");
+        user.setEmail("email@");
+        user.setName("sda");
+        user.setId(-1);
+        user.setBirthday(invalidDate);
+        User result = userController.createUser(user);
+        assertEquals(null, result);
+    }
+
 
 }
