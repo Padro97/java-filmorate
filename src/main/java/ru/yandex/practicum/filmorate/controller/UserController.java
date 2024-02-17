@@ -34,7 +34,7 @@ public class UserController {
             }
 
             if (user.getLogin() == null || user.getLogin().isEmpty() || user.getLogin().contains(" ")) {
-                log.error("400");
+                log.error("400 - Invalid login");
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
             }
 
