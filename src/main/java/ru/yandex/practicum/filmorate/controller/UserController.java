@@ -16,10 +16,9 @@ import java.time.LocalDate;
 public class UserController {
     private List<User> users = new ArrayList<>();
     private final Logger log = LoggerFactory.getLogger(UserController.class);
-    User user;
 
 
-    @PostMapping("/create")
+    @PostMapping
     public User createUser(@RequestBody User user) {
         try {
             if (user.getEmail() == null || !user.getEmail().contains("@")) {
