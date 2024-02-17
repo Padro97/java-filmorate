@@ -22,32 +22,32 @@ public class UserController {
     public User createUser(@RequestBody User user) {
         try {
             if (user.getEmail() == null || !user.getEmail().contains("@")) {
-                log.error("Ошибка: Электронная почта не может быть пустой и должна содержать символ @");
+                log.error("400");
                 return null;
             }
 
             if (user.getId() < 1) {
-                log.error("Ошибка: ID должен быть равен или больше 1");
+                log.error("400");
                 return null;
             }
 
             if (user.getLogin() == null || user.getLogin().isEmpty() || user.getLogin().contains(" ")) {
-                log.error("Ошибка: Логин не может быть пустым и содержать пробелы");
+                log.error("400");
                 return null;
             }
 
             if (user.getName() == null || user.getName().isEmpty()) {
-                log.error("Ошибка: Имя пользователя не может быть пустым");
+                log.error("400");
                 return null;
             }
 
             if (user.getBirthday() != null && user.getBirthday().isAfter(LocalDate.now())) {
-                log.error("Ошибка: Дата рождения не может быть в будущем");
+                log.error("400");
                 return null;
             }
 
             users.add(user);
-            log.info("Пользователь успешно создан: {}", user);
+            log.info("200");
             return user;
         } catch (Exception e) {
             log.error("Произошла ошибка при создании пользователя", e);
