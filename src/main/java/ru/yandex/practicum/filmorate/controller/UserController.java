@@ -78,7 +78,12 @@ public class UserController {
                     user.setName(updatedUser.getName());
                     user.setBirthday(updatedUser.getBirthday());
                     log.info("200 - User updated successfully");
-                    return ResponseEntity.ok("User updated successfully");
+
+                    // Преобразование объекта в JSON с использованием Gson
+                    String jsonResponse = gson.toJson(user);
+
+                    // Возвращаем успешный ответ с JSON в теле
+                    return ResponseEntity.ok(jsonResponse);
                 }
             }
 
