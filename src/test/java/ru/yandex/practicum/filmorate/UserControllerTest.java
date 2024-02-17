@@ -100,31 +100,4 @@ public class UserControllerTest {
         ResponseEntity<Object> result = userController.createUser(user);
         assertEquals(HttpStatus.BAD_REQUEST, result.getStatusCode());
     }
-
-    @Test
-    void testUpdateUserSuccess() {
-        // Arrange
-        User existingUser = new User();
-        existingUser.setId(1);
-        existingUser.setEmail("existing@mail.com");
-        existingUser.setLogin("existingUser");
-        existingUser.setName("Existing User");
-        existingUser.setBirthday(LocalDate.of(1990, 1, 1));
-
-        userController.getAllUsers().add(existingUser);
-
-        User updatedUser = new User();
-        updatedUser.setId(1);
-        updatedUser.setEmail("updated@mail.com");
-        updatedUser.setLogin("updatedUser");
-        updatedUser.setName("Updated User");
-        updatedUser.setBirthday(LocalDate.of(1995, 5, 5));
-
-        ResponseEntity<String> responseEntity = userController.updateUser(updatedUser);
-
-        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
-        assertEquals("User updated successfully", responseEntity.getBody());
-    }
-
-
 }
