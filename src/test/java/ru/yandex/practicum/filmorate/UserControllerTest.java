@@ -58,7 +58,7 @@ public class UserControllerTest {
         userWithInvalidLogin.setName("aa");
         userWithInvalidLogin.setBirthday(date);
         ResponseEntity<Object> result = userController.createUser(userWithInvalidLogin);
-        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, result.getStatusCode());
+        assertEquals(HttpStatus.BAD_REQUEST, result.getStatusCode());
     }
 
     @Test
