@@ -5,8 +5,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.User;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonPrimitive;
+import com.google.gson.JsonSerializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.time.LocalDate;
@@ -20,44 +25,46 @@ public class UserController {
     private List<User> users = new ArrayList<>();
     private final Logger log = LoggerFactory.getLogger(UserController.class);
 
+    private final Gson gson = new GsonBuilder()
+            .registerTypeAdapter(LocalDate.class, (JsonSerializer<LocalDate>) (date, type, jsonSerializationContext) ->
+                    new JsonPrimitive(date.format(DateTimeFormatter.ISO_LOCAL_DATE)))
+            .create();
 
     @PostMapping
     public ResponseEntity<Object> createUser(@RequestBody User user) {
-        Gson gson = new Gson();
-        String jsonResponse = gson.toJson(user);
         try {
             if (user.getEmail() == null || !user.getEmail().contains("@")) {
                 log.error("400 - Invalid email");
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(jsonResponse);
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(createErrorResponse("Invalid email"));
             }
 
             if (user.getId() < 1) {
                 log.error("400 - Invalid user ID");
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(jsonResponse);
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(createErrorResponse("Invalid user ID"));
             }
 
             if (user.getLogin() == null || user.getLogin().isEmpty() || user.getLogin().contains(" ")) {
                 log.error("400 - Invalid login");
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(jsonResponse);
-
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(createErrorResponse("Invalid login"));
             }
 
             if (user.getName() == null || user.getName().isEmpty()) {
                 log.error("400 - Invalid name");
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(jsonResponse);
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(createErrorResponse("Invalid name"));
             }
 
             if (user.getBirthday() != null && user.getBirthday().isAfter(LocalDate.now())) {
                 log.error("400 - Invalid birthday");
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(jsonResponse);
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(createErrorResponse("Invalid birthday"));
             }
 
             users.add(user);
             log.info("200 - User created successfully");
+            String jsonResponse = gson.toJson(user);
             return ResponseEntity.ok(jsonResponse);
         } catch (Exception e) {
             log.error("500 - Internal Server Error", e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(jsonResponse);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(createErrorResponse("Internal Server Error"));
         }
     }
 
@@ -70,15 +77,15 @@ public class UserController {
                     user.setLogin(updatedUser.getLogin());
                     user.setName(updatedUser.getName());
                     user.setBirthday(updatedUser.getBirthday());
-                    log.info("Пользователь успешно обновлен: {}", user);
+                    log.info("200 - User updated successfully");
                     return ResponseEntity.ok("User updated successfully");
                 }
             }
 
-            log.error("Ошибка: Пользователь с указанным ID не найден");
+            log.error("400 - User not found");
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User not found");
         } catch (Exception e) {
-            log.error("Произошла ошибка при обновлении пользователя", e);
+            log.error("500 - Internal Server Error", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Internal Server Error");
         }
     }
@@ -86,5 +93,9 @@ public class UserController {
     @GetMapping
     public List<User> getAllUsers() {
         return users;
+    }
+
+    private String createErrorResponse(String errorMessage) {
+        return gson.toJson(new ErrorResponse("Bad Request", errorMessage));
     }
 }
