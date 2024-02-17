@@ -58,24 +58,24 @@ public class UserController {
     }
 
     @PutMapping
-    public Object updateUser(@PathVariable int id, @RequestBody User updatedUser) {
+    public ResponseEntity<String> updateUser(@RequestBody User updatedUser) {
         try {
             for (User user : users) {
-                if (user.getId() == id) {
+                if (user.getId() == updatedUser.getId()) {
                     user.setEmail(updatedUser.getEmail());
                     user.setLogin(updatedUser.getLogin());
                     user.setName(updatedUser.getName());
                     user.setBirthday(updatedUser.getBirthday());
                     log.info("Пользователь успешно обновлен: {}", user);
-                    return ResponseEntity.ok(user).getBody();
+                    return ResponseEntity.ok("User updated successfully");
                 }
             }
 
             log.error("Ошибка: Пользователь с указанным ID не найден");
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User not found");
         } catch (Exception e) {
             log.error("Произошла ошибка при обновлении пользователя", e);
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Internal Server Error");
         }
     }
 
