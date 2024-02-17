@@ -69,7 +69,7 @@ public class UserController {
     }
 
     @PutMapping
-    public ResponseEntity<String> updateUser(@RequestBody User updatedUser) {
+    public ResponseEntity<Object> updateUser(@RequestBody User updatedUser) {
         try {
             for (User user : users) {
                 if (user.getId() == updatedUser.getId()) {
@@ -87,11 +87,12 @@ public class UserController {
                 }
             }
 
-            log.error("400 - User not found");
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User not found");
+            // Если пользователь не найден, возвращаем 404 с сообщением об ошибке
+            log.error("404 - User not found");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse("User not found", "User not found"));
         } catch (Exception e) {
             log.error("500 - Internal Server Error", e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Internal Server Error");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ErrorResponse("Internal Server Error", "Internal Server Error"));
         }
     }
 
