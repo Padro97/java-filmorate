@@ -58,8 +58,7 @@ public class UserControllerTest {
         userWithInvalidLogin.setName("aa");
         userWithInvalidLogin.setBirthday(date);
         ResponseEntity<Object> result = userController.createUser(userWithInvalidLogin);
-
-        assertEquals(null, result);
+        assertEquals(HttpStatus.BAD_REQUEST, result.getStatusCode());
     }
 
     @Test
@@ -71,7 +70,7 @@ public class UserControllerTest {
         user.setId(1);
         user.setBirthday(date);
         ResponseEntity<Object> result = userController.createUser(user);
-        assertEquals(null, result);
+        assertEquals(HttpStatus.BAD_REQUEST, result.getStatusCode());
     }
 
     @Test
@@ -85,7 +84,7 @@ public class UserControllerTest {
         user.setId(1);
         user.setBirthday(invalidDate);
         ResponseEntity<Object> result = userController.createUser(user);
-        assertEquals(null, result);
+        assertEquals(HttpStatus.BAD_REQUEST, result.getStatusCode());
     }
 
     @Test
@@ -99,7 +98,7 @@ public class UserControllerTest {
         user.setId(-1);
         user.setBirthday(invalidDate);
         ResponseEntity<Object> result = userController.createUser(user);
-        assertEquals(null, result);
+        assertEquals(HttpStatus.BAD_REQUEST, result.getStatusCode());
     }
 
 

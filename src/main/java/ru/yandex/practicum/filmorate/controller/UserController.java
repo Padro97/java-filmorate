@@ -30,22 +30,22 @@ public class UserController {
 
             if (user.getId() < 1) {
                 log.error("400");
-                return null;
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
             }
 
             if (user.getLogin() == null || user.getLogin().isEmpty() || user.getLogin().contains(" ")) {
                 log.error("400");
-                return null;
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
             }
 
             if (user.getName() == null || user.getName().isEmpty()) {
                 log.error("400");
-                return null;
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
             }
 
             if (user.getBirthday() != null && user.getBirthday().isAfter(LocalDate.now())) {
                 log.error("400");
-                return null;
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
             }
 
             users.add(user);
@@ -53,7 +53,7 @@ public class UserController {
             return ResponseEntity.ok(user);
         } catch (Exception e) {
             log.error("Произошла ошибка при создании пользователя", e);
-            return null;
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         }
     }
 
