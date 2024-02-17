@@ -35,7 +35,7 @@ public class UserController {
 
             if (user.getLogin() == null || user.getLogin().isEmpty() || user.getLogin().contains(" ")) {
                 log.error("400");
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
             }
 
             if (user.getName() == null || user.getName().isEmpty()) {
