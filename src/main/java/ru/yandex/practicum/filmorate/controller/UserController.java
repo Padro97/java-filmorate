@@ -24,13 +24,13 @@ public class UserController {
     public ResponseEntity<Object> createUser(@RequestBody User user) {
         try {
             if (user.getEmail() == null || !user.getEmail().contains("@")) {
-                log.error("400");
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+                log.error("400 - Invalid email");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid email");
             }
 
             if (user.getId() < 1) {
-                log.error("400");
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+                log.error("400 - Invalid user ID");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid user ID");
             }
 
             if (user.getLogin() == null || user.getLogin().isEmpty() || user.getLogin().contains(" ")) {
@@ -39,21 +39,21 @@ public class UserController {
             }
 
             if (user.getName() == null || user.getName().isEmpty()) {
-                log.error("400");
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+                log.error("400 - Invalid name");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid name");
             }
 
             if (user.getBirthday() != null && user.getBirthday().isAfter(LocalDate.now())) {
-                log.error("400");
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+                log.error("400 - Invalid birthday");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid birthday");
             }
 
             users.add(user);
-            log.info("200");
+            log.info("200 - User created successfully");
             return ResponseEntity.ok(user);
         } catch (Exception e) {
-            log.error("Произошла ошибка при создании пользователя", e);
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+            log.error("500 - Internal Server Error", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Internal Server Error");
         }
     }
 
