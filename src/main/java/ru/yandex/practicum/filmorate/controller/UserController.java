@@ -18,6 +18,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/users")
 public class UserController {
+    private int nextId = 1;
     private List<User> users = new ArrayList<>();
     private final Logger log = LoggerFactory.getLogger(UserController.class);
 
@@ -33,6 +34,8 @@ public class UserController {
                 log.error("400 - Invalid email");
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(createErrorResponse("Invalid email"));
             }
+
+            user.setId(nextId++);
 
             if (user.getId() < 1) {
                 log.error("400 - Invalid user ID");

@@ -19,6 +19,7 @@ import java.time.LocalDate;
 @RestController
 @RequestMapping("/films")
 public class FilmController {
+    private int nextId = 1;
     private List<Film> films = new ArrayList<>();
     private final Logger log = LoggerFactory.getLogger(FilmController.class);
     private final Gson gson = new GsonBuilder()
@@ -49,7 +50,7 @@ public class FilmController {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(createErrorResponse("Invalid film duration"));
             }
 
-            film.setId(films.size() + 1);
+            film.setId(nextId++);
             films.add(film);
             log.info("Фильм успешно добавлен: {}", film);
             String jsonResponse = gson.toJson(film);
