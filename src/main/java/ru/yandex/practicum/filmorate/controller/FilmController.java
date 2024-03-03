@@ -62,8 +62,7 @@ public class FilmController {
             if (film.getDuration() <= 0) {
                 log.error("Ошибка: Продолжительность фильма должна быть положительной");
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(createErrorResponse("Invalid film duration"));
-
-             }
+            }
 
             film.setId((long) nextId++);
             films.add(film);
@@ -112,7 +111,8 @@ public class FilmController {
     public ResponseEntity<String> likeFilm(@PathVariable Long id, @PathVariable Long userId) {
         try {
             filmService.addLike(id, userId);
-            return ResponseEntity.ok("Like added successfully");} catch (ValidationException e) {
+            return ResponseEntity.ok("Like added successfully");
+        } catch (ValidationException e) {
             ErrorResponse errorResponse = new ErrorResponse("Bad Request", e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(gson.toJson(errorResponse));
         } catch (ObjectNotFoundException e) {
@@ -151,5 +151,4 @@ public class FilmController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
     }
-
 }
