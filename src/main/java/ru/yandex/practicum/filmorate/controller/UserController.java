@@ -34,6 +34,7 @@ public class UserController {
         this.userService = userService;
         this.userStorage = userStorage;
     }
+
     private int nextId = 1;
 
     private List<User> users = new ArrayList<>();
