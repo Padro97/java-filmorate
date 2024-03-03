@@ -35,7 +35,9 @@ public class UserController {
         this.userStorage = userStorage;
     }
     private int nextId = 1;
+
     private List<User> users = new ArrayList<>();
+
     private final Logger log = LoggerFactory.getLogger(UserController.class);
 
     private final Gson gson = new GsonBuilder()
