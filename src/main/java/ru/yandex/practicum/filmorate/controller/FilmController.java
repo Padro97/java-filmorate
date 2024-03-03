@@ -62,7 +62,8 @@ public class FilmController {
             if (film.getDuration() <= 0) {
                 log.error("Ошибка: Продолжительность фильма должна быть положительной");
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(createErrorResponse("Invalid film duration"));
-            }
+
+             }
 
             film.setId((long) nextId++);
             films.add(film);
