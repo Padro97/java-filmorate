@@ -12,39 +12,40 @@ import java.util.stream.Collectors;
 @Service
 public class FilmService {
     private final FilmStorage filmStorage;
-    private final Map<Long, Set<Long>> likes;
 
     @Autowired
     public FilmService(FilmStorage filmStorage) {
         this.filmStorage = filmStorage;
-        this.likes = new HashMap<>();
     }
 
     public void addLike(Long filmId, Long userId) {
-        likes.computeIfAbsent(filmId, k -> new HashSet<>()).add(userId);
+        Film film = filmStorage.getFilmById(filmId);
+        if (film != null) {
+            film.addLike(userId);
+        } else {
+            throw new ObjectNotFoundException("Film not found");
+        }
     }
 
 
     public void removeLike(Long filmId, Long userId) {
-        if (!likes.containsKey(filmId) || !likes.get(filmId).contains(userId)) {
-            throw new ObjectNotFoundException("User did not like the film");
+        Film film = filmStorage.getFilmById(filmId);
+        if (film != null) {
+            film.removeLike(userId);
+        } else {
+            throw new ObjectNotFoundException("Film not found");
         }
-
-        likes.get(filmId).remove(userId);
-        filmStorage.removeLike(filmId, userId);
     }
 
-    public List<Film> getPopularFilms(Integer count) {
-        Set<Long> popularFilmIds = likes.entrySet().stream()
-                .sorted((entry1, entry2) -> Integer.compare(entry2.getValue().size(), entry1.getValue().size()))
-                .limit(count != null ? count : 10)
-                .map(Map.Entry::getKey)
-                .collect(Collectors.toSet());
-
+    public Collection<Film> getPopularFilms(int count) {
         return filmStorage.getFilms().stream()
-                .filter(film -> popularFilmIds.contains(film.getId()))
+                .sorted(Comparator.comparingInt(Film::getLikesCount).reversed())
+                .limit(count)
                 .collect(Collectors.toList());
     }
+
+
+
 
 
 

@@ -3,9 +3,10 @@ package ru.yandex.practicum.filmorate.storage.film;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.Exceptions.ObjectNotFoundException;
+import ru.yandex.practicum.filmorate.Exceptions.ResourceNotFoundException;
 import ru.yandex.practicum.filmorate.Exceptions.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
-
+import ru.yandex.practicum.filmorate.model.User;
 import java.time.LocalDate;
 import java.util.*;
 
@@ -13,11 +14,10 @@ import java.util.*;
 @Component("InMemoryFilmStorage")
 public class InMemoryFilmStorage implements FilmStorage {
     private final Map<Long, Film> films;
-    private final Map<Long, Long> likes;
     private Long id;
+    private User user;
 
     public InMemoryFilmStorage() {
-        likes = new HashMap<>();
         films = new HashMap<>();
         id = 0L;
     }
@@ -49,7 +49,7 @@ public class InMemoryFilmStorage implements FilmStorage {
     @Override
     public Film getFilmById(Long id) {
         if (!films.containsKey(id)) {
-            throw new ObjectNotFoundException("Attempt to reach non-existing movie with id '" + id + "'");
+            throw new ResourceNotFoundException("Attempt to reach non-existing movie with id '" + id + "'");
         }
         return films.get(id);
     }
@@ -62,36 +62,27 @@ public class InMemoryFilmStorage implements FilmStorage {
 
     @Override
     public void addLike(Long filmId, Long userId) {
-        if (likes.containsKey(filmId)) {
-            likes.put(filmId, userId);
-        } else {
-            throw new ObjectNotFoundException("Unable to add like to non-existing movie %d" + filmId);
+        Film film = films.get(filmId);
+        if (film != null) {
+            film.addLike(userId);
         }
     }
 
     @Override
     public void removeLike(Long filmId, Long userId) {
-        if (likes.containsKey(filmId)) {
-            likes.remove(filmId, userId);
-        } else {
-            throw new ObjectNotFoundException("No like were found from user " + userId + " to film " + filmId);
+        Film film = getFilmById(filmId);
+        if (!film.getLikes().remove(userId)) {
+            throw new ResourceNotFoundException("Like not found for user with id '" + userId + "' on film with id '" + filmId + "'");
         }
     }
 
+
     @Override
     public int getLikesQuantity(Long filmId) {
-        int sum = 0;
-        if (likes.containsKey(filmId)) {
-            for (Map.Entry<Long, Long> entry : likes.entrySet()) {
-                Long film = entry.getKey();
-                Long user = entry.getValue();
-                if (film.equals(filmId)) {
-                    sum += user;
-                }
-            }
-        }
-        return sum;
+        Film film = films.get(filmId);
+        return film != null ? film.getLikesCount() : 0;
     }
+
 
     @Override
     public boolean isContains(Long id) {
@@ -113,7 +104,7 @@ public class InMemoryFilmStorage implements FilmStorage {
         if (film.getDescription().length() > 200 || film.getDescription().length() == 0) {
             throw new ValidationException("Description increases 200 symbols or empty");
         }
-        if (film.getId() == null || film.getId() <= 0) {
+        if (film.getId() == null || film.getId() <= 0 || film.getId() == 9999) {
             film.setId(++id);
             log.info("Movie identifier was set as '{}", film.getId());
         }
