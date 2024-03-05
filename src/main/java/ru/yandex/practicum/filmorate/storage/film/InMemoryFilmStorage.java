@@ -15,7 +15,6 @@ import java.util.*;
 public class InMemoryFilmStorage implements FilmStorage {
     private final Map<Long, Film> films;
     private Long id;
-    private User user;
 
     public InMemoryFilmStorage() {
         films = new HashMap<>();
@@ -48,9 +47,6 @@ public class InMemoryFilmStorage implements FilmStorage {
 
     @Override
     public Film getFilmById(Long id) {
-        if (!films.containsKey(id)) {
-            throw new ResourceNotFoundException("Attempt to reach non-existing movie with id '" + id + "'");
-        }
         return films.get(id);
     }
 
