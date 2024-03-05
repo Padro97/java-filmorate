@@ -6,7 +6,6 @@ import ru.yandex.practicum.filmorate.Exceptions.ObjectNotFoundException;
 import ru.yandex.practicum.filmorate.Exceptions.ResourceNotFoundException;
 import ru.yandex.practicum.filmorate.Exceptions.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.model.User;
 import java.time.LocalDate;
 import java.util.*;
 
