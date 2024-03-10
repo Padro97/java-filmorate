@@ -2,107 +2,65 @@ package ru.yandex.practicum.filmorate.storage.film;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
-import ru.yandex.practicum.filmorate.Exceptions.ObjectNotFoundException;
-import ru.yandex.practicum.filmorate.Exceptions.ResourceNotFoundException;
-import ru.yandex.practicum.filmorate.Exceptions.ValidationException;
+import ru.yandex.practicum.filmorate.exceptions.FilmNotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
-import java.time.LocalDate;
-import java.util.*;
+
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 @Slf4j
-@Component("InMemoryFilmStorage")
+@Component
 public class InMemoryFilmStorage implements FilmStorage {
-    private final Map<Long, Film> films;
-    private Long id;
+    private final Map<Integer, Film> films = new HashMap<>();
+    private int id = 0;
 
-    public InMemoryFilmStorage() {
-        films = new HashMap<>();
-        id = 0L;
+    @Override
+    public Collection<Film> findAll() {
+        return films.values();
     }
 
     @Override
     public Film createFilm(Film film) {
-        validate(film);
+        film.setId(++id);
+
+        log.trace("film: {}", film);
+
         films.put(film.getId(), film);
-        log.info("'{}' movie was added to a library, the identifier is '{}'", film.getName(), film.getId());
 
-        log.info("Films in the library after creation: {}", films);
-
-        return film;
+        return films.get(film.getId());
     }
-
 
     @Override
     public Film updateFilm(Film film) {
+        log.trace("film: {}", film);
+
         if (films.containsKey(film.getId())) {
-            validate(film);
-            films.put(film.getId(), film);
-            log.info("'{}' movie was updated in a library, the identifier is '{}'", film.getName(), film.getId());
-            return film;
+            films.replace(film.getId(), films.get(film.getId()), film);
         } else {
-            throw new ObjectNotFoundException("Attempt to update non-existing movie");
+            throw new FilmNotFoundException("Нет такого фильма для обновления");
+        }
+
+        return films.get(film.getId());
+    }
+
+    @Override
+    public void deleteFilm(int id) {
+        if (films.containsKey(id)) {
+            films.remove(id);
+        } else {
+            throw new FilmNotFoundException("Нет фильма с id " + id + " для удаления");
         }
     }
 
     @Override
-    public Film getFilmById(Long id) {
-        return films.get(id);
-    }
+    public Film findFilm(int id) {
+        Film film = films.get(id);
 
-    @Override
-    public List<Film> getFilms() {
-        log.info("There are '{}' movies in a library now", films.size());
-        return new ArrayList<>(films.values());
-    }
-
-    @Override
-    public void addLike(Long filmId, Long userId) {
-        Film film = films.get(filmId);
-        if (film != null) {
-            film.addLike(userId);
+        if (film == null) {
+            throw new FilmNotFoundException("Нет фильма с id " + id);
         }
-    }
 
-    @Override
-    public void removeLike(Long filmId, Long userId) {
-        Film film = getFilmById(filmId);
-        if (!film.getLikes().remove(userId)) {
-            throw new ResourceNotFoundException("Like not found for user with id '" + userId + "' on film with id '" + filmId + "'");
-        }
-    }
-
-
-    @Override
-    public int getLikesQuantity(Long filmId) {
-        Film film = films.get(filmId);
-        return film != null ? film.getLikesCount() : 0;
-    }
-
-
-    @Override
-    public boolean isContains(Long id) {
-        return false;
-    }
-
-
-    private void validate(Film film) {
-        if (film.getReleaseDate() == null ||
-                film.getReleaseDate().isBefore(LocalDate.of(1895, 12, 28))) {
-            throw new ValidationException("Incorrect release date");
-        }
-        if (film.getName().isEmpty() || film.getName().isBlank()) {
-            throw new ValidationException("Attempt to set an empty movie name");
-        }
-        if (film.getDuration() <= 0) {
-            throw new ValidationException("Attempt to set duration less than zero");
-        }
-        if (film.getDescription().length() > 200 || film.getDescription().length() == 0) {
-            throw new ValidationException("Description increases 200 symbols or empty");
-        }
-        if (film.getId() == null || film.getId() <= 0 || film.getId() == 9999) {
-            film.setId(++id);
-            log.info("Movie identifier was set as '{}", film.getId());
-        }
+        return film;
     }
 }
-

@@ -2,61 +2,62 @@ package ru.yandex.practicum.filmorate.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import ru.yandex.practicum.filmorate.Exceptions.ObjectNotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
+import ru.yandex.practicum.filmorate.storage.film.InMemoryFilmStorage;
+import ru.yandex.practicum.filmorate.storage.user.InMemoryUserStorage;
+import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
-import java.util.*;
+import java.util.Comparator;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
 public class FilmService {
     private final FilmStorage filmStorage;
+    private final UserStorage userStorage;
+    protected Comparator<Film> comparator = new Comparator<>() {
+        @Override
+        public int compare(Film o1, Film o2) {
+            if (o1.getLikes() == null || o2.getLikes() == null) {
+                if (o1.getLikes() == null) {
+                    return 1;
+                } else {
+                    return -1;
+                }
+            }
+            return o2.getLikes().size() - o1.getLikes().size();
+        }
+    };
 
     @Autowired
-    public FilmService(FilmStorage filmStorage) {
+    public FilmService(InMemoryFilmStorage filmStorage, InMemoryUserStorage userStorage) {
         this.filmStorage = filmStorage;
+        this.userStorage = userStorage;
     }
 
-    public void addLike(Long filmId, Long userId) {
-        Film film = filmStorage.getFilmById(filmId);
-        if (film != null) {
-            film.addLike(userId);
-        } else {
-            throw new ObjectNotFoundException("Film not found");
-        }
+    public void addLike(int filmId, int userId) {
+        Film film = filmStorage.findFilm(filmId);
+        userStorage.findUser(userId);
+
+        film.addLike(userId);
+
+        filmStorage.updateFilm(film);
     }
 
+    public void deleteLike(int filmId, int userId) {
+        Film film = filmStorage.findFilm(filmId);
+        userStorage.findUser(userId);
 
-    public void removeLike(Long filmId, Long userId) {
-        Film film = filmStorage.getFilmById(filmId);
-        if (film != null) {
-            film.removeLike(userId);
-        } else {
-            throw new ObjectNotFoundException("Film not found");
-        }
+        film.deleteLike(userId);
+
+        filmStorage.updateFilm(film);
     }
 
-    public Collection<Film> getPopularFilms(int count) {
-        return filmStorage.getFilms().stream()
-                .sorted(Comparator.comparingInt(Film::getLikesCount).reversed())
+    public List<Film> getPopularFilms(int count) {
+        return filmStorage.findAll().stream()
+                .sorted(comparator)
                 .limit(count)
                 .collect(Collectors.toList());
     }
-
-
-
-
-
-
-    public Film getFilmById(Long id) {
-        Optional<Film> optionalFilm = filmStorage.getFilms().stream()
-                .filter(film -> film.getId().equals(id))
-                .findFirst();
-
-        return optionalFilm.orElse(null);
-    }
-
-
 }
-

@@ -1,118 +1,75 @@
 package ru.yandex.practicum.filmorate.storage.user;
 
-import org.springframework.stereotype.Component;
-import ru.yandex.practicum.filmorate.Exceptions.ObjectNotFoundException;
-import ru.yandex.practicum.filmorate.Exceptions.ValidationException;
-import ru.yandex.practicum.filmorate.model.User;
 import lombok.extern.slf4j.Slf4j;
-import java.time.LocalDate;
-import java.util.ArrayList;
+import org.springframework.stereotype.Component;
+import ru.yandex.practicum.filmorate.exceptions.UserNotFoundException;
+import ru.yandex.practicum.filmorate.model.User;
+
+import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @Slf4j
-@Component("InMemoryUserStorage")
+@Component
 public class InMemoryUserStorage implements UserStorage {
-    private final Map<Long, User> users;
-    private final Map<Long, Long> friends;
-    private Long id;
+    private final Map<Integer, User> users = new HashMap<>();
+    private int id = 0;
 
-    public InMemoryUserStorage() {
-        users = new HashMap<>();
-        friends = new HashMap<Long, Long>();
-        id = 0L;
+    @Override
+    public Collection<User> findAll() {
+        return users.values();
     }
 
     @Override
     public User createUser(User user) {
-        validate(user);
+        user.setId(++id);
+
+        log.trace("user: {}", user);
+
         users.put(user.getId(), user);
-        log.info("The user '{}' has been saved with the identifier '{}'", user.getEmail(), user.getId());
-        return user;
+
+        if (users.get(user.getId()).getName() == null || users.get(user.getId()).getName().isEmpty()) {
+            user.setName(user.getLogin());
+            users.put(user.getId(), user);
+        }
+
+        return users.get(user.getId());
     }
 
     @Override
     public User updateUser(User user) {
+        log.trace("user: {}", user);
+
         if (users.containsKey(user.getId())) {
-            validate(user);
-            users.put(user.getId(), user);
-            log.info("'{}' info with identifier '{}' was updated", user.getLogin(), user.getId());
-            return user;
-        } else {
-            throw new ObjectNotFoundException("Attempt to update non-existing user");
-        }
-    }
-
-    @Override
-    public User getUserById(Long id) {
-        if (!users.containsKey(id)) {
-            throw new ObjectNotFoundException("Attempt to reach non-existing user with id '" + id + "'");
-        }
-        return users.get(id);
-    }
-
-    @Override
-    public List<User> getUsers() {
-        log.info("The number of users: '{}'", users.size());
-        return new ArrayList<>(users.values());
-    }
-
-    @Override
-    public void addFriend(Long userId, Long friendId) {
-        if (friends.containsKey(userId)) {
-            friends.put(userId, friendId);
-        } else {
-            throw new ObjectNotFoundException("Attempt to add to a friends list non-existing user " + userId);
-        }
-    }
-
-    @Override
-    public void removeFriend(Long userId, Long friendId) {
-        if (friends.containsKey(userId)) {
-            friends.remove(userId, friendId);
-        } else {
-            throw new ObjectNotFoundException("Attempt to remove from friends list non-existing user " + userId);
-        }
-    }
-
-    @Override
-    public List<User> getFriends(Long userId) {
-        List<User> friendsList = new ArrayList<>();
-        if (friends.containsKey(userId)) {
-            for (Map.Entry<Long, Long> entry : friends.entrySet()) {
-                Long id = entry.getKey();
-                if (id.equals(userId)) {
-                    User friend = getUserById(entry.getValue());
-                    friendsList.add(friend);
-                }
+            users.replace(user.getId(), users.get(user.getId()), user);
+            if (users.get(user.getId()).getName() == null) {
+                user.setName(user.getLogin());
+                users.put(user.getId(), user);
             }
+        } else {
+            throw new UserNotFoundException("Нет такого пользователя для обновления");
         }
-        return friendsList;
+
+        return users.get(user.getId());
     }
 
     @Override
-    public boolean isContains(Long id) {
-        return false;
+    public void deleteUser(int id) {
+        if (users.containsKey(id)) {
+            users.remove(id);
+        } else {
+            throw new UserNotFoundException("Нет пользователя с id " + id + " для удаления ");
+        }
     }
 
-    private void validate(User user) {
-        if (user.getBirthday().isAfter(LocalDate.now()) || user.getBirthday() == null) {
-            throw new ValidationException("Incorrect user's birthday with identifier '" + user.getId() + "'");
+    @Override
+    public User findUser(int id) {
+        User user = users.get(id);
+
+        if (user == null) {
+            throw new UserNotFoundException("Нет пользователя с id " + id);
         }
-        if (user.getEmail() == null || user.getEmail().isBlank() || !user.getEmail().contains("@")) {
-            throw new ValidationException("Incorrect user's email with identifier '" + user.getId() + "'");
-        }
-        if (user.getName() == null || user.getName().isBlank()) {
-            user.setName(user.getLogin());
-            log.info("User's name with identifier '{}' was set as '{}'", user.getId(), user.getName());
-        }
-        if (user.getLogin().isBlank() || user.getLogin().isEmpty()) {
-            throw new ValidationException("Incorrect user's login with identifier '" + user.getId() + "'");
-        }
-        if (user.getId() == null || user.getId() <= 0) {
-            user.setId(++id);
-            log.info("'{}' identifier was set as '{}'", user.getEmail(), user.getId());
-        }
+
+        return users.get(id);
     }
 }
