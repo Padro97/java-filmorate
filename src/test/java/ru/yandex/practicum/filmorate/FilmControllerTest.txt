@@ -1,6 +1,7 @@
 package ru.yandex.practicum.filmorate;
 
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import ru.yandex.practicum.filmorate.controller.FilmController;
@@ -12,9 +13,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class FilmControllerTest {
 
+    @Autowired
+    private FilmController filmController;
+
     @Test
     void testAddFilmSuccess() {
-        FilmController filmController = new FilmController();
         Film film = new Film();
         film.setDescription("sadsada");
         film.setDuration(10);
@@ -28,7 +31,7 @@ public class FilmControllerTest {
 
     @Test
     void testAddFilmLargeDescription() {
-        FilmController filmController = new FilmController();
+
         Film film = new Film();
         film.setDescription("ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff");
         film.setDuration(10);
@@ -42,7 +45,7 @@ public class FilmControllerTest {
 
     @Test
     void testAddFilmEmtyName() {
-        FilmController filmController = new FilmController();
+
         Film film = new Film();
         film.setDescription("fdsfsd");
         film.setDuration(10);
@@ -56,7 +59,7 @@ public class FilmControllerTest {
 
     @Test
     void testAddFilmInvalidReleaseDate() {
-        FilmController filmController = new FilmController();
+
         Film film = new Film();
         film.setDescription("fdsfsd");
         film.setDuration(10);
@@ -70,7 +73,7 @@ public class FilmControllerTest {
 
     @Test
     void testAddFilmInvalidDuration() {
-        FilmController filmController = new FilmController();
+
         Film film = new Film();
         film.setDescription("fdsfsd");
         film.setDuration(-10);
@@ -81,4 +84,6 @@ public class FilmControllerTest {
 
         assertEquals(HttpStatus.BAD_REQUEST, responseEntity.getStatusCode());
     }
+
+
 }
