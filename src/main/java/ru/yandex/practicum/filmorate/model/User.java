@@ -22,17 +22,4 @@ public class User {
     protected String name;
     @PastOrPresent(message = "День рождения не может быть в будущем")
     protected LocalDate birthday;
-    private Set<Integer> friends = new HashSet<>();
-
-    public void addFriend(int id) {
-        friends.add(id);
-    }
-
-    public void deleteFriend(int id) {
-        friends.remove(id);
-    }
-
-    public Set<Integer> getFriends() {
-        return new HashSet<>(friends);
-    }
 }
