@@ -7,7 +7,6 @@ import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.builders.FilmBuilder;
 import ru.yandex.practicum.filmorate.dao.intrfc.LikeStorage;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.model.Rating;
 
 import java.util.*;
 
