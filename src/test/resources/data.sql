@@ -1,7 +1,7 @@
 INSERT INTO USERS (EMAIL, LOGIN, USER_NAME, BIRTHDAY)
 VALUES ('user@email.ru', 'padro', 'Nikita Polyanin', '2004-11-11'),
-       ('iv@ya.ru', 'rast', 'Vasia', '1999-09-09'),
-       ('z@xiz.ru', 'Luk', 'Eva', '2022-02-02');
+       ('np@yandex.ru', 'dad', 'fadd', '2001-10-11'),
+       ('zsdaa@fsddfsd.ru', 'Lasad', 'braun', '2000-01-01');
 
 INSERT INTO FILMS (FILM_NAME, DESCRIPTION, RELEASE_DATE, DURATION, RATING_ID)
 VALUES ( 'aaa', 'aaa', '2022-11-11', 60, 2),
