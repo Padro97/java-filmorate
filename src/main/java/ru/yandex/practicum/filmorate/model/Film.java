@@ -6,8 +6,7 @@ import ru.yandex.practicum.filmorate.annotations.AfterOrEqualDate;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.Size;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.Collection;
 
 @Data
 public class Film {
@@ -21,17 +20,6 @@ public class Film {
     protected String releaseDate;
     @Positive(message = "Продолжительность фильма должна быть положительной")
     protected int duration;
-    protected Set<Integer> likes = new HashSet<>();
-
-    public void addLike(int id) {
-        likes.add(id);
-    }
-
-    public void deleteLike(int id) {
-        likes.remove(id);
-    }
-
-    public Set<Integer> getLikes() {
-        return new HashSet<>(likes);
-    }
+    protected Collection<Genre> genres;
+    protected Rating mpa;
 }

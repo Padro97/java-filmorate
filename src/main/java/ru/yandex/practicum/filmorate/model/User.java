@@ -7,8 +7,6 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.PastOrPresent;
 import javax.validation.constraints.Pattern;
 import java.time.LocalDate;
-import java.util.HashSet;
-import java.util.Set;
 
 @Data
 public class User {
@@ -22,17 +20,4 @@ public class User {
     protected String name;
     @PastOrPresent(message = "День рождения не может быть в будущем")
     protected LocalDate birthday;
-    private Set<Integer> friends = new HashSet<>();
-
-    public void addFriend(int id) {
-        friends.add(id);
-    }
-
-    public void deleteFriend(int id) {
-        friends.remove(id);
-    }
-
-    public Set<Integer> getFriends() {
-        return new HashSet<>(friends);
-    }
 }
