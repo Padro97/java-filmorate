@@ -4,9 +4,6 @@ import org.springframework.jdbc.support.rowset.SqlRowSet;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Rating;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-
 public class FilmBuilder {
     public static Film buildFilmFromSqlRowSet(SqlRowSet rowSet) {
         Film film = new Film();
