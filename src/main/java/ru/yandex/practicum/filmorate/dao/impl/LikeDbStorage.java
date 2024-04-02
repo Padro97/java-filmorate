@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Component;
+import ru.yandex.practicum.filmorate.builders.FilmBuilder;
 import ru.yandex.practicum.filmorate.dao.intrfc.LikeStorage;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Rating;
@@ -40,18 +41,7 @@ public class LikeDbStorage implements LikeStorage {
         SqlRowSet filmRows = jdbcTemplate.queryForRowSet(sql, count);
 
         while (filmRows.next()) {
-            Film film = new Film();
-
-            film.setId(filmRows.getInt("FILM_ID"));
-            film.setName(filmRows.getString("FILM_NAME"));
-            film.setDescription(filmRows.getString("DESCRIPTION"));
-            film.setReleaseDate(filmRows.getDate("RELEASE_DATE").toString());
-            film.setDuration(filmRows.getInt("DURATION"));
-
-            Rating rating = new Rating();
-            rating.setId(filmRows.getInt("RATING_ID"));
-            film.setMpa(rating);
-            films.add(film);
+            films.add(FilmBuilder.buildFilmFromSqlRowSet(filmRows));
         }
         return films;
     }

@@ -6,7 +6,7 @@ import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.dao.intrfc.FilmsGenreStorage;
-import ru.yandex.practicum.filmorate.exceptions.GenreNotFoundException;
+import ru.yandex.practicum.filmorate.exceptions.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
 
@@ -73,7 +73,7 @@ public class FilmsGenreDbStorage implements FilmsGenreStorage {
                 }
             }
         } else {
-            throw new GenreNotFoundException("Список жанров+ пуст");
+            throw new NotFoundException("Список жанров+ пуст");
         }
 
         String sql = "SELECT * FROM FILM_GENRES WHERE FILM_ID IN (" + numbers + ")";

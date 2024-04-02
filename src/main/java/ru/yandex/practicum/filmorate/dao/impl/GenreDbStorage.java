@@ -5,7 +5,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.dao.intrfc.GenreStorage;
-import ru.yandex.practicum.filmorate.exceptions.GenreNotFoundException;
+import ru.yandex.practicum.filmorate.exceptions.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Genre;
 
 import java.util.ArrayList;
@@ -43,7 +43,7 @@ public class GenreDbStorage implements GenreStorage {
             genre.setName(genreRows.getString("GENRE_NAME"));
             return genre;
         } else {
-            throw new GenreNotFoundException("Жанр не найден.");
+            throw new NotFoundException("Жанр не найден.");
         }
     }
 }

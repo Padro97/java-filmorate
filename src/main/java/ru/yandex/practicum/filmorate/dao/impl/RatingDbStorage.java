@@ -4,8 +4,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Component;
+import ru.yandex.practicum.filmorate.builders.RatingBuilder;
 import ru.yandex.practicum.filmorate.dao.intrfc.RatingStorage;
-import ru.yandex.practicum.filmorate.exceptions.RatingNotFoundException;
+import ru.yandex.practicum.filmorate.exceptions.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Rating;
 
 import java.util.ArrayList;
@@ -22,16 +23,14 @@ public class RatingDbStorage implements RatingStorage {
         SqlRowSet ratingRows = jdbcTemplate.queryForRowSet("SELECT * FROM RATINGS");
 
         while (ratingRows.next()) {
-            Rating rating = new Rating();
-            rating.setId(ratingRows.getInt("RATING_ID"));
-            rating.setName(ratingRows.getString("RATING_NAME"));
-            ratings.add(rating);
+            ratings.add(RatingBuilder.buildRatingFromSqlRowSet(ratingRows));
         }
         return ratings;
     }
 
     @Override
     public Rating getRatingById(int ratingId) {
+
         SqlRowSet ratingRows = jdbcTemplate.queryForRowSet("SELECT * FROM RATINGS WHERE RATING_ID = ?", ratingId);
         return makeRating(ratingRows);
     }
@@ -43,7 +42,7 @@ public class RatingDbStorage implements RatingStorage {
             rating.setName(ratingRows.getString("RATING_NAME"));
             return rating;
         } else {
-            throw new RatingNotFoundException("Рейтинг не найден.");
+            throw new NotFoundException("Рейтинг не найден.");
         }
     }
 }

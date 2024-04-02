@@ -6,7 +6,7 @@ import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Component;
-import ru.yandex.practicum.filmorate.exceptions.UserNotFoundException;
+import ru.yandex.practicum.filmorate.exceptions.NotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
@@ -65,7 +65,7 @@ public class UserDbStorage implements UserStorage {
             jdbcTemplate.update(sql, user.getEmail(), user.getLogin(),
                     user.getName(), user.getBirthday(), user.getId());
         } else {
-            throw new UserNotFoundException("Пользователь c id= " + user.getId() + " не найден.");
+            throw new NotFoundException("Пользователь c id= " + user.getId() + " не найден.");
         }
 
         SqlRowSet updatedUserRows = jdbcTemplate.queryForRowSet("SELECT * FROM USERS WHERE USER_ID = ?",
@@ -95,7 +95,7 @@ public class UserDbStorage implements UserStorage {
             user.setBirthday(userRows.getDate("BIRTHDAY").toLocalDate());
             return user;
         } else {
-            throw new UserNotFoundException("Пользователь не найден.");
+            throw new NotFoundException("Пользователь не найден.");
         }
     }
 }

@@ -6,7 +6,7 @@ import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Component;
-import ru.yandex.practicum.filmorate.exceptions.FilmNotFoundException;
+import ru.yandex.practicum.filmorate.exceptions.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Rating;
 import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
@@ -70,7 +70,7 @@ public class FilmDbStorage implements FilmStorage {
             jdbcTemplate.update(sql, film.getName(), film.getDescription(), Date.valueOf(film.getReleaseDate()),
                     film.getDuration(), film.getMpa().getId(), film.getId());
         } else {
-            throw new FilmNotFoundException("Фильм c id = " + film.getId() + " не найден.");
+            throw new NotFoundException("Фильм c id = " + film.getId() + " не найден.");
         }
 
         return film;
@@ -101,7 +101,7 @@ public class FilmDbStorage implements FilmStorage {
             film.setMpa(rating);
             return film;
         } else {
-            throw new FilmNotFoundException("Фильм не найден.");
+            throw new NotFoundException("Фильм не найден.");
         }
     }
 }

@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
 import org.springframework.jdbc.core.JdbcTemplate;
 import ru.yandex.practicum.filmorate.dao.impl.FilmDbStorage;
-import ru.yandex.practicum.filmorate.exceptions.FilmNotFoundException;
+import ru.yandex.practicum.filmorate.exceptions.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Rating;
 
@@ -84,8 +84,8 @@ class FilmDbStorageTest {
         Film savedFilm = filmStorage.findFilm(4);
         filmStorage.deleteFilm(4);
 
-        final FilmNotFoundException exception = assertThrows(
-                FilmNotFoundException.class,
+        final NotFoundException exception = assertThrows(
+                NotFoundException.class,
                 new Executable() {
                     @Override
                     public void execute() {

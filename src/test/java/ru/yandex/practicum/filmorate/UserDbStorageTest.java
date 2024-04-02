@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
 import org.springframework.jdbc.core.JdbcTemplate;
 import ru.yandex.practicum.filmorate.dao.impl.UserDbStorage;
-import ru.yandex.practicum.filmorate.exceptions.UserNotFoundException;
+import ru.yandex.practicum.filmorate.exceptions.NotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
 
 import java.time.LocalDate;
@@ -87,8 +87,8 @@ class UserDbStorageTest {
         User savedUser = userStorage.findUser(4);
         userStorage.deleteUser(4);
 
-        final UserNotFoundException exception = assertThrows(
-                UserNotFoundException.class,
+        final NotFoundException exception = assertThrows(
+                NotFoundException.class,
                 new Executable() {
                     @Override
                     public void execute() {
